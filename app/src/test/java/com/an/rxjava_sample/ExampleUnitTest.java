@@ -36,7 +36,6 @@ import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
-import io.reactivex.internal.subscribers.SinglePostCompleteSubscriber;
 import io.reactivex.observables.GroupedObservable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.schedulers.Timed;
@@ -66,38 +65,35 @@ public class ExampleUnitTest {
          * & onComplete() or onError()
          *
          * */
-        Observable observable = Observable.create(new ObservableOnSubscribe() {
-            @Override
-            public void subscribe(ObservableEmitter emitter) {
+        Observable<String> observable = Observable.create(emitter -> {
 
-                try {
+            try {
 
-                    /*
-                     * The emitter can be used to emit each list item
-                     * to the subscriber.
-                     *
-                     * */
-                    for (String alphabet : alphabets) {
-                        emitter.onNext(alphabet);
-                    }
-
-                    /*
-                     * Once all the items in the list are emitted,
-                     * we can call complete stating that no more items
-                     * are to be emitted.
-                     *
-                     * */
-                    emitter.onComplete();
-
-                } catch (Exception e) {
-
-                    /*
-                     * If an error occurs in the process,
-                     * we can call error.
-                     *
-                     * */
-                    emitter.onError(e);
+                /*
+                 * The emitter can be used to emit each list item
+                 * to the subscriber.
+                 *
+                 * */
+                for (String alphabet : alphabets) {
+                    emitter.onNext(alphabet);
                 }
+
+                /*
+                 * Once all the items in the list are emitted,
+                 * we can call complete stating that no more items
+                 * are to be emitted.
+                 *
+                 * */
+                emitter.onComplete();
+
+            } catch (Exception e) {
+
+                /*
+                 * If an error occurs in the process,
+                 * we can call error.
+                 *
+                 * */
+                emitter.onError(e);
             }
         });
 
@@ -127,7 +123,6 @@ public class ExampleUnitTest {
     }
 
 
-
     @Test
     public void testDeferObservable() {
 
@@ -145,7 +140,6 @@ public class ExampleUnitTest {
          * */
 
     }
-
 
 
     @Test
@@ -1611,7 +1605,7 @@ public class ExampleUnitTest {
 
         Observable<Integer> observable1 = Observable
                 .create(emitter -> {
-                    for(int i=0; i<= 6; i++) {
+                    for (int i = 0; i <= 6; i++) {
                         Thread.sleep(1000);
                         emitter.onNext(i);
                     }
@@ -1654,7 +1648,7 @@ public class ExampleUnitTest {
 
         Observable
                 .create(emitter -> {
-                    for(int i=0; i<= 6; i++) {
+                    for (int i = 0; i <= 6; i++) {
 //                        Thread.sleep(1000);
                         emitter.onNext(i);
                     }
@@ -1663,7 +1657,7 @@ public class ExampleUnitTest {
                 .skipWhile(new Predicate<Object>() {
                     @Override
                     public boolean test(Object o) throws Exception {
-                        return (((Integer)o < 2));
+                        return (((Integer) o < 2));
                     }
                 })
                 .subscribe(new Observer<Object>() {
@@ -1695,7 +1689,7 @@ public class ExampleUnitTest {
 
         Observable<Integer> observable1 = Observable
                 .create(emitter -> {
-                    for(int i=0; i<= 6; i++) {
+                    for (int i = 0; i <= 6; i++) {
                         Thread.sleep(1000);
                         emitter.onNext(i);
                     }
@@ -1736,7 +1730,7 @@ public class ExampleUnitTest {
 
         Observable
                 .create(emitter -> {
-                    for(int i=0; i<= 6; i++) {
+                    for (int i = 0; i <= 6; i++) {
                         Thread.sleep(1000);
                         emitter.onNext(i);
                     }
@@ -1745,7 +1739,7 @@ public class ExampleUnitTest {
                 .takeWhile(new Predicate<Object>() {
                     @Override
                     public boolean test(Object o) {
-                        return (((Integer)o < 2));
+                        return (((Integer) o < 2));
                     }
                 })
                 .subscribe(new Observer<Object>() {
@@ -1832,28 +1826,28 @@ public class ExampleUnitTest {
         Observable<Integer> observable = Observable.just(1, 2, 3, 4, 5);
 
         MathObservable
-             .max(observable)
-             .subscribe(new Observer<Integer>() {
-                 @Override
-                 public void onSubscribe(Disposable d) {
+                .max(observable)
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-                 }
+                    }
 
-                 @Override
-                 public void onNext(Integer integer) {
-                     System.out.println("Max value: " + integer);
-                 }
+                    @Override
+                    public void onNext(Integer integer) {
+                        System.out.println("Max value: " + integer);
+                    }
 
-                 @Override
-                 public void onError(Throwable e) {
+                    @Override
+                    public void onError(Throwable e) {
 
-                 }
+                    }
 
-                 @Override
-                 public void onComplete() {
+                    @Override
+                    public void onComplete() {
 
-                 }
-             });
+                    }
+                });
     }
 
 
@@ -1957,13 +1951,13 @@ public class ExampleUnitTest {
     @Test
     public void testSingleObservable() {
 
-            Single.create(new SingleOnSubscribe<User>() {
-                    @Override
-                    public void subscribe(SingleEmitter<User> emitter) throws Exception {
-                        User user = new User("Anitaa");
-                        emitter.onSuccess(user);
-                    }
-                })
+        Single.create(new SingleOnSubscribe<User>() {
+            @Override
+            public void subscribe(SingleEmitter<User> emitter) throws Exception {
+                User user = new User("Anitaa");
+                emitter.onSuccess(user);
+            }
+        })
                 .observeOn(Schedulers.io())
                 .subscribe(new SingleObserver<User>() {
                     @Override
@@ -2182,8 +2176,10 @@ public class ExampleUnitTest {
          * will be printed
          * */
         pSubject.subscribe(it -> System.out.println("Observer 1 onNext: " + it),
-                (Throwable onError) -> { },
-                () -> {},
+                (Throwable onError) -> {
+                },
+                () -> {
+                },
                 on1 -> System.out.println("Observer 1 onSubscribe"));
 
         /*
@@ -2198,8 +2194,10 @@ public class ExampleUnitTest {
          * another Observer to the Subject.
          * */
         pSubject.subscribe(it -> System.out.println("Observer 2 onNext: " + it),
-                (Throwable onError) -> { },
-                () -> {},
+                (Throwable onError) -> {
+                },
+                () -> {
+                },
                 on1 -> System.out.println("Observer 2 onSubscribe"));
 
 
@@ -2216,7 +2214,9 @@ public class ExampleUnitTest {
 
 
         pSubject.subscribe(it -> System.out.println("Observer 1 onNext: " + it),
-                (Throwable error) -> { }, () -> {},
+                (Throwable error) -> {
+                }, () -> {
+                },
                 on1 -> System.out.println("Observer 1 onSubscribe"));
 
         pSubject.onNext(1);
@@ -2224,7 +2224,9 @@ public class ExampleUnitTest {
 
 
         pSubject.subscribe(it -> System.out.println("Observer 2 onNext: " + it),
-                (Throwable error) -> { }, () -> {},
+                (Throwable error) -> {
+                }, () -> {
+                },
                 on1 -> System.out.println("Observer 2 onSubscribe"));
 
         pSubject.onNext(3);
@@ -2239,7 +2241,9 @@ public class ExampleUnitTest {
 
 
         pSubject.subscribe(it -> System.out.println("Observer 1 onNext: " + it),
-                (Throwable error) -> { }, () -> {},
+                (Throwable error) -> {
+                }, () -> {
+                },
                 on1 -> System.out.println("Observer 1 onSubscribe"));
 
         pSubject.onNext(1);
@@ -2247,7 +2251,9 @@ public class ExampleUnitTest {
 
 
         pSubject.subscribe(it -> System.out.println("Observer 2 onNext: " + it),
-                (Throwable error) -> { }, () -> {},
+                (Throwable error) -> {
+                }, () -> {
+                },
                 on1 -> System.out.println("Observer 2 onSubscribe"));
 
         pSubject.onNext(3);
@@ -2262,7 +2268,8 @@ public class ExampleUnitTest {
 
 
         pSubject.subscribe(it -> System.out.println("Observer 1 onNext: " + it),
-                (Throwable error) -> { }, () -> System.out.println("Observer 1 onComplete"),
+                (Throwable error) -> {
+                }, () -> System.out.println("Observer 1 onComplete"),
                 on1 -> System.out.println("Observer 1 onSubscribe"));
 
         pSubject.onNext(1);
@@ -2270,7 +2277,8 @@ public class ExampleUnitTest {
 
 
         pSubject.subscribe(it -> System.out.println("Observer 2 onNext: " + it),
-                (Throwable error) -> { }, () -> System.out.println("Observer 2 onComplete"),
+                (Throwable error) -> {
+                }, () -> System.out.println("Observer 2 onComplete"),
                 on1 -> System.out.println("Observer 2 onSubscribe"));
 
         pSubject.onNext(3);
