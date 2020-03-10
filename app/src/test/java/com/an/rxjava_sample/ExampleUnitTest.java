@@ -134,10 +134,28 @@ public class ExampleUnitTest {
         alphabets.add("E");
         alphabets.add("F");
 
-        /*
-         * Observable.defer()
-         *
-         * */
+        Observable.defer(()->Observable.just(alphabets))
+        .subscribe(new Observer<List<String>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(List<String> strings) {
+                System.out.println(strings);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
 
     }
 
