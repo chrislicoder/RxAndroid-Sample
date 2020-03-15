@@ -13,6 +13,7 @@ public class ExampleRunningClass {
         testList.add("A");
         testList.add("B");
         testList.add("C");
+        testList.add("D");
 
         Observable<String> observable = Observable.create(emitter -> {
             try {
